@@ -18,6 +18,9 @@ const int kTimeoutValue = 10;
 // BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
 const int kRpmPerPulse = 20;
 
+const int kActivationRpm = 4000;
+const int kMaxRpm = 6500;
+
 void enableLightsUpTo(int idx) {
   if (idx < 0 || idx > kNumLeds) {
     return;
@@ -25,6 +28,24 @@ void enableLightsUpTo(int idx) {
   digitalWrite(kShiftRegClockPin, LOW);
   shiftOut(kShiftSerialInPin, kShiftClockPin, MSBFIRST, (1 << idx) - 1);
   digitalWrite(kShiftRegClockPin, HIGH);
+}
+
+void blinkLights(int interval) {
+  digitalWrite(kShiftOutputEnablePin, HIGH);
+  delay(interval);
+  digitalWrite(kShiftOutputEnablePin, LOW);
+}
+
+int calculateNumLights(int currentRpm, int activationRpm, int maxRpm, int numLeds) {
+  if (currentRpm < activationRpm) {
+    return 0;
+  }
+  if (currentRpm > maxRpm) {
+    // Return more than number of LEDs to signify rapid flashing
+    return kNumLeds + 1;
+  }
+  // 1 LED at activation RPM, all 8 LEDs at max RPM
+  return 1 + (((numLeds - 1) * (currentRpm - activationRpm)) / (maxRpm - activationRpm));
 }
 
 int readRpm() {
@@ -83,8 +104,14 @@ void setup() {
 void loop() {
   int rpm = readRpm();
 
-  for (int i = 0; i <= kNumLeds; i++) {
-    enableLightsUpTo(i);
-    delay(500);
+  int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
+  if (numLights > kNumLeds) {
+    enableLightsUpTo(kNumLeds);
+    // Blink lights off for 200ms
+    blinkLights(250);
+  } else if (numLights > 0) {
+    enableLightsUpTo(numLights);
+    // Illuminate for at least 200ms
+    delay(200);
   }
 }
