@@ -16,7 +16,7 @@ volatile int gTimeoutCounter = 0;
 long gCurrentRpm = 0;
 const int kTimeoutValue = 10;
 // BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
-int kRpmPerPulse = 20;
+const int kRpmPerPulse = 20;
 
 void enableLightsUpTo(int idx) {
   if (idx < 0 || idx > kNumLeds) {
