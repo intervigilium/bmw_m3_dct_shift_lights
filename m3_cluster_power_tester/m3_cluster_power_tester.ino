@@ -2,9 +2,9 @@ int internalLed = 13;
 
 const int kNumLeds = 8;
 
-const int kShiftSerialInPin = 2;
 const int kShiftClockPin = 3;
 const int kShiftRegClockPin = 4;
+const int kShiftSerialInPin = 5;
 const int kShiftClearPin = 19;
 const int kShiftOutputEnablePin = 18;
 
