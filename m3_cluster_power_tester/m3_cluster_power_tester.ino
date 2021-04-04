@@ -1,6 +1,7 @@
 const int kNumLeds = 8;
 const int kIlluminationTimeMs = 200;
 
+// Pins 2/3 are the only external interrupt pins available
 const int kRpmPin = 2;
 
 const int kShiftClockPin = 3;
