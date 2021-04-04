@@ -9,6 +9,9 @@ const int shiftClear = 19;
 const int shiftOutputEnable = 18;
 
 void enableLightsUpTo(int idx) {
+  if (idx < 0 || idx > kNumLeds) {
+    return;
+  }
   digitalWrite(shiftRegClock, LOW);
   shiftOut(shiftSerialIn, shiftClock, MSBFIRST, (1 << idx) - 1);
   digitalWrite(shiftRegClock, HIGH);
