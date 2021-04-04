@@ -114,6 +114,7 @@ void loop() {
     if (gLastDebugRpm > kMaxRpm + kDebugRpmSlope || gLastDebugRpm < 0) {
       gDebugRpmDirection = -1 * gDebugRpmDirection;
     }
+    delay(200);
   } else {
     rpm = readRpm();
   }
