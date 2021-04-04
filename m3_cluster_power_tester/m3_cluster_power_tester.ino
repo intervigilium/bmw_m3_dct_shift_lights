@@ -123,7 +123,7 @@ void loop() {
     enableLightOutput(true);
     enableLightsUpTo(kNumLeds);
     // Blink lights off for 200ms
-    blinkLights(250);
+    blinkLights(200);
   } else if (numLights > 0) {
     enableLightOutput(true);
     enableLightsUpTo(numLights);
