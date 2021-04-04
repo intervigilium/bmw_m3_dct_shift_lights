@@ -108,8 +108,8 @@ void loop() {
   int rpm = 0;
   if (kDebug) {
     rpm = gLastDebugRpm;
-    gLastDebugRpm += kDebugRpmSlope;
-    if (gLastDebugRpm > kMaxRpm + kDebugRpmSlope) {
+    gLastDebugRpm += (kDebugRpmSlope * gDebugRpmDirection);
+    if (gLastDebugRpm > kMaxRpm + kDebugRpmSlope || gLastDebugRpm < 0) {
       gDebugRpmDirection = -1 * gDebugRpmDirection;
     }
   } else {
