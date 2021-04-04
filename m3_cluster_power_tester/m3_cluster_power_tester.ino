@@ -66,13 +66,17 @@ void setupShiftRegisterPins() {
   digitalWrite(kShiftClearPin, HIGH);
 }
 
+void setupRpmCalculation() {
+  gTimeoutCounter = kTimeoutValue;
+  pinMode(kRpmPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
+}
+
 // the setup routine runs once when you press reset:
 void setup() {
   setupShiftRegisterPins();
 
-  gTimeoutCounter = kTimeoutValue;
-  pinMode(kRpmPin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
+  setupRpmCalculation();
 }
 
 // the loop routine runs over and over again forever:
