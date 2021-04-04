@@ -97,7 +97,7 @@ void setupShiftRegisterPins() {
 
   // clear registers (active-low)
   digitalWrite(kShiftClearPin, LOW);
-  delay(250);
+  delay(100);
   digitalWrite(kShiftClearPin, HIGH);
 }
 
