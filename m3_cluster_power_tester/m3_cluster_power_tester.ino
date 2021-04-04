@@ -1,5 +1,3 @@
-int internalLed = 13;
-
 const int kNumLeds = 8;
 
 const int kRpmPin = 2;
