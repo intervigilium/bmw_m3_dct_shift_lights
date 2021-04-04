@@ -2,11 +2,11 @@ int internalLed = 13;
 
 const int kNumLeds = 8;
 
-int shiftSerialIn = 2;
-int shiftClock = 3;
-int shiftRegClock = 4;
-int shiftClear = 19;
-int shiftOutputEnable = 18;
+const int shiftSerialIn = 2;
+const int shiftClock = 3;
+const int shiftRegClock = 4;
+const int shiftClear = 19;
+const int shiftOutputEnable = 18;
 
 void enableLightsUpTo(int idx) {
   digitalWrite(shiftRegClock, LOW);
