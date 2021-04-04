@@ -50,17 +50,12 @@ void rpmIsr() {
   gTimeoutCounter = kTimeoutValue;
 }
 
-// the setup routine runs once when you press reset:
-void setup() {
+void setupShiftRegisterPins() {
   pinMode(kShiftSerialInPin, OUTPUT);
   pinMode(kShiftClockPin, OUTPUT);
   pinMode(kShiftRegClockPin, OUTPUT);
   pinMode(kShiftClearPin, OUTPUT);
   pinMode(kShiftOutputEnablePin, OUTPUT);
-
-  gTimeoutCounter = kTimeoutValue;
-  pinMode(kRpmPin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
 
   // enable all outputs (active-low)
   digitalWrite(kShiftOutputEnablePin, LOW);
@@ -69,6 +64,15 @@ void setup() {
   digitalWrite(kShiftClearPin, LOW);
   delay(250);
   digitalWrite(kShiftClearPin, HIGH);
+}
+
+// the setup routine runs once when you press reset:
+void setup() {
+  setupShiftRegisterPins();
+
+  gTimeoutCounter = kTimeoutValue;
+  pinMode(kRpmPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
 }
 
 // the loop routine runs over and over again forever:
