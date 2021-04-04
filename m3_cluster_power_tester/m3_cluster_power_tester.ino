@@ -40,20 +40,17 @@ void enableLightsUpTo(int idx) {
 
 void blinkLights(int interval) {
   digitalWrite(kShiftOutputEnablePin, HIGH);
-  delay(interval);
+  delay(interval / 2);
   digitalWrite(kShiftOutputEnablePin, LOW);
+  delay(interval / 2);
 }
 
 int calculateNumLights(int currentRpm, int activationRpm, int maxRpm, int numLeds) {
   if (currentRpm < activationRpm) {
     return 0;
   }
-  if (currentRpm > maxRpm) {
-    // Return more than number of LEDs to signify rapid flashing
-    return kNumLeds + 1;
-  }
-  // 1 LED at activation RPM, all 8 LEDs at max RPM
-  return 1 + (((numLeds - 1) * (currentRpm - activationRpm)) / (maxRpm - activationRpm));
+  // 1 LED at activation RPM, all 8 LEDs at just under max RPM
+  return 1 + ((numLeds * (currentRpm - activationRpm)) / (maxRpm - activationRpm));
 }
 
 int readRpm() {
