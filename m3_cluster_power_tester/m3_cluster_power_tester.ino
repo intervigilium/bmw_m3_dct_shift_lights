@@ -1,4 +1,5 @@
 const int kNumLeds = 8;
+const int kIlluminationTimeMs = 200;
 
 const int kRpmPin = 2;
 
@@ -119,16 +120,14 @@ void loop() {
   if (numLights > kNumLeds) {
     enableLightOutput(true);
     enableLightsUpTo(kNumLeds);
-    // Blink lights off for 200ms
-    blinkLights(200);
+    blinkLights(kIlluminationTimeMs);
   } else if (numLights > 0) {
     enableLightOutput(true);
     enableLightsUpTo(numLights);
-    // Illuminate for at least 200ms
-    delay(200);
+    delay(kIlluminationTimeMs);
   } else {
     // No lights enabled
     enableLightOutput(false);
-    delay(200);
+    delay(kIlluminationTimeMs);
   }
 }
