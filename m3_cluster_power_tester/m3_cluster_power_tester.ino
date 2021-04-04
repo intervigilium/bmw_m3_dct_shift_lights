@@ -24,6 +24,11 @@ const int kRpmPerPulse = 20;
 const int kActivationRpm = 4000;
 const int kMaxRpm = 6500;
 
+void enableLightOutput(bool enable) {
+  // This pin is active-low
+  digitalWrite(kShiftOutputEnablePin, enable ? LOW : HIGH);
+}
+
 void enableLightsUpTo(int idx) {
   if (idx < 0 || idx > kNumLeds) {
     return;
@@ -81,9 +86,6 @@ void setupShiftRegisterPins() {
   pinMode(kShiftClearPin, OUTPUT);
   pinMode(kShiftOutputEnablePin, OUTPUT);
 
-  // enable all outputs (active-low)
-  digitalWrite(kShiftOutputEnablePin, LOW);
-
   // clear registers (active-low)
   digitalWrite(kShiftClearPin, LOW);
   delay(250);
@@ -117,12 +119,17 @@ void loop() {
   }
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
   if (numLights > kNumLeds) {
+    enableLightOutput(true);
     enableLightsUpTo(kNumLeds);
     // Blink lights off for 200ms
     blinkLights(250);
   } else if (numLights > 0) {
+    enableLightOutput(true);
     enableLightsUpTo(numLights);
     // Illuminate for at least 200ms
     delay(200);
+  } else {
+    // No lights enabled
+    enableLightOutput(false);
   }
 }
