@@ -54,6 +54,16 @@ int calculateNumLights(int currentRpm, int activationRpm, int maxRpm, int numLed
   return 1 + ((numLeds * (currentRpm - activationRpm)) / (maxRpm - activationRpm));
 }
 
+int generateDebugRpm() {
+  int rpm = gLastDebugRpm;
+  gLastDebugRpm += (kDebugRpmSlope * gDebugRpmDirection);
+  if (gLastDebugRpm > (kMaxRpm + kDebugRpmSlope) ||
+      gLastDebugRpm < (kActivationRpm - kDebugRpmSlope)) {
+    gDebugRpmDirection = -1 * gDebugRpmDirection;
+  }
+  return rpm;
+}
+
 int readRpm() {
   if (gTimeoutCounter > 0) {
     // Check for RPM signal shutting down
@@ -105,17 +115,7 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-  int rpm = 0;
-  if (kDebug) {
-    rpm = gLastDebugRpm;
-    gLastDebugRpm += (kDebugRpmSlope * gDebugRpmDirection);
-    if (gLastDebugRpm > (kMaxRpm + kDebugRpmSlope) ||
-        gLastDebugRpm < (kActivationRpm - kDebugRpmSlope)) {
-      gDebugRpmDirection = -1 * gDebugRpmDirection;
-    }
-  } else {
-    rpm = readRpm();
-  }
+  int rpm = kDebug ? generateDebugRpm() : readRpm();
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
   if (numLights > kNumLeds) {
     enableLightOutput(true);
