@@ -1,8 +1,3 @@
-const bool kDebug = false;
-int gLastDebugRpm = 0;
-int gDebugRpmDirection = 1;
-int kDebugRpmSlope = 200;
-
 const int kNumLeds = 8;
 
 const int kRpmPin = 2;
@@ -23,6 +18,11 @@ const int kRpmPerPulse = 20;
 
 const int kActivationRpm = 4000;
 const int kMaxRpm = 6500;
+
+const bool kDebug = false;
+int gDebugRpmDirection = 1;
+int kDebugRpmSlope = 200;
+int gLastDebugRpm = kActivationRpm - gDebugRpmDirection;
 
 void enableLightOutput(bool enable) {
   // This pin is active-low
@@ -108,7 +108,8 @@ void loop() {
   if (kDebug) {
     rpm = gLastDebugRpm;
     gLastDebugRpm += (kDebugRpmSlope * gDebugRpmDirection);
-    if (gLastDebugRpm > kMaxRpm + kDebugRpmSlope || gLastDebugRpm < 0) {
+    if (gLastDebugRpm > (kMaxRpm + kDebugRpmSlope) ||
+        gLastDebugRpm < (kActivationRpm - kDebugRpmSlope)) {
       gDebugRpmDirection = -1 * gDebugRpmDirection;
     }
   } else {
