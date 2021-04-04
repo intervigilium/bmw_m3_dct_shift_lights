@@ -1,3 +1,8 @@
+const bool kDebug = false;
+int gLastDebugRpm = 0;
+int gDebugRpmDirection = 1;
+int kDebugRpmSlope = 200;
+
 const int kNumLeds = 8;
 
 const int kRpmPin = 2;
@@ -100,8 +105,16 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-  int rpm = readRpm();
-
+  int rpm = 0;
+  if (kDebug) {
+    rpm = gLastDebugRpm;
+    gLastDebugRpm += kDebugRpmSlope;
+    if (gLastDebugRpm > kMaxRpm + kDebugRpmSlope) {
+      gDebugRpmDirection = -1 * gDebugRpmDirection;
+    }
+  } else {
+    rpm = readRpm();
+  }
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
   if (numLights > kNumLeds) {
     enableLightsUpTo(kNumLeds);
