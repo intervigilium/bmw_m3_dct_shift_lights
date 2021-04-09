@@ -26,6 +26,16 @@ int gDebugRpmDirection = 1;
 int kDebugRpmSlope = 200;
 int gLastDebugRpm = kActivationRpm - gDebugRpmDirection;
 
+const bool kEnableSerial = false;
+uint64_t gNumCycles = 0;
+
+void setupSerial() {
+  if (!kEnableSerial) {
+    return;
+  }
+  Serial.begin(9600);
+}
+
 void enableLightOutput(bool enable) {
   // This pin is active-low
   digitalWrite(kShiftOutputEnablePin, enable ? LOW : HIGH);
@@ -109,6 +119,8 @@ void setupRpmCalculation() {
 
 // the setup routine runs once when you press reset:
 void setup() {
+  setupSerial();
+
   setupShiftRegisterPins();
 
   setupRpmCalculation();
@@ -117,6 +129,13 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   int rpm = kDebug ? generateDebugRpm() : readRpm();
+  if (kEnableSerial) {
+    if (gNumCycles % 500 == 0) {
+      Serial.print("Current RPM: ");
+      Serial.print(rpm);
+      Serial.println();
+    }
+  }
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
   if (numLights > kNumLeds) {
     enableLightOutput(true);
