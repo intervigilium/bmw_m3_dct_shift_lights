@@ -130,13 +130,20 @@ void setup() {
 void loop() {
   int rpm = kDebug ? generateDebugRpm() : readRpm();
   if (kEnableSerial) {
-    if (gNumCycles % 500 == 0) {
+    if (gNumCycles % 5 == 0) {
       Serial.print("Current RPM: ");
       Serial.print(rpm);
       Serial.println();
     }
   }
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
+  if (kEnableSerial) {
+    if (gNumCycles % 5 == 0) {
+      Serial.print("LEDs to light: ");
+      Serial.print(numLights);
+      Serial.println();
+    }
+  }
   if (numLights > kNumLeds) {
     enableLightOutput(true);
     enableLightsUpTo(kNumLeds);
@@ -150,4 +157,5 @@ void loop() {
     enableLightOutput(false);
     delay(kIlluminationTimeMs);
   }
+  gNumCycles++;
 }
