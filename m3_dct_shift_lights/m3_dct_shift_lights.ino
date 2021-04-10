@@ -5,10 +5,10 @@ const int kIlluminationTimeMs = 200;
 const int kRpmPin = 2;
 
 const int kShiftClockPin = 3;
-const int kShiftRegClockPin = 4;
+const int kShiftRegClockPin = 6;
 const int kShiftSerialInPin = 5;
-const int kShiftClearPin = 19;
-const int kShiftOutputEnablePin = 18;
+const int kShiftClearPin = A3;
+const int kShiftOutputEnablePin = A2;
 
 volatile unsigned long gInterval = 0;
 volatile unsigned long gLastPulseTime = 0;
