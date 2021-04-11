@@ -21,13 +21,26 @@ const int kRpmPerPulse = 20;
 const int kActivationRpm = 4000;
 const int kMaxRpm = 6500;
 
-const bool kDebug = false;
-int gDebugRpmDirection = 1;
-int kDebugRpmSlope = 200;
-int gLastDebugRpm = kActivationRpm - kDebugRpmSlope;
+struct Debug {
+  bool enabled;
+  int rpmDirection;
+  int rpmSlope;
+  int lastDebugRpm;
+};
+struct Debug gDebug;
 
 const bool kEnableSerial = false;
 uint64_t gNumCycles = 0;
+
+void setupDebugMode(struct Debug& d) {
+  const bool kDebug = false;
+  const int kDebugRpmSlope = 200;
+
+  d.enabled = kDebug;
+  d.rpmDirection = 1;
+  d.rpmSlope = kDebugRpmSlope;
+  d.lastDebugRpm = kActivationRpm - d.rpmSlope;
+}
 
 void setupSerial() {
   if (!kEnableSerial) {
@@ -65,12 +78,12 @@ int calculateNumLights(int currentRpm, int activationRpm, int maxRpm, int numLed
   return 1 + ((numLeds * (currentRpm - activationRpm)) / (maxRpm - activationRpm));
 }
 
-int generateDebugRpm() {
-  int rpm = gLastDebugRpm;
-  gLastDebugRpm += (kDebugRpmSlope * gDebugRpmDirection);
-  if (gLastDebugRpm > (kMaxRpm + kDebugRpmSlope) ||
-      gLastDebugRpm < (kActivationRpm - kDebugRpmSlope)) {
-    gDebugRpmDirection = -1 * gDebugRpmDirection;
+int generateDebugRpm(struct Debug& d) {
+  int rpm = d.lastDebugRpm;
+  d.lastDebugRpm += (d.rpmSlope * d.rpmDirection);
+  if (d.lastDebugRpm > (kMaxRpm + d.rpmSlope) ||
+      d.lastDebugRpm < (kActivationRpm - d.rpmSlope)) {
+    d.rpmDirection = -1 * d.rpmDirection;
   }
   return rpm;
 }
@@ -119,6 +132,8 @@ void setupRpmCalculation() {
 
 // the setup routine runs once when you press reset:
 void setup() {
+  setupDebugMode(gDebug);
+
   setupSerial();
 
   setupShiftRegisterPins();
@@ -128,7 +143,7 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-  int rpm = kDebug ? generateDebugRpm() : readRpm();
+  int rpm = gDebug.enabled ? generateDebugRpm(gDebug) : readRpm();
   if (kEnableSerial) {
     if (gNumCycles % 5 == 0) {
       Serial.print("Current RPM: ");
