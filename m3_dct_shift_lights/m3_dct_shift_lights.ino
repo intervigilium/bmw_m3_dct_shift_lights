@@ -29,8 +29,11 @@ struct Debug {
 };
 struct Debug gDebug;
 
-const bool kEnableSerial = false;
-uint64_t gNumCycles = 0;
+struct Serial {
+  bool enabled;
+  uint64_t numCycles;
+};
+struct Serial gSerial;
 
 void setupDebugMode(struct Debug& d) {
   const bool kDebug = false;
@@ -42,11 +45,45 @@ void setupDebugMode(struct Debug& d) {
   d.lastDebugRpm = kActivationRpm - d.rpmSlope;
 }
 
-void setupSerial() {
+void setupSerial(struct Serial& s) {
+  const bool kEnableSerial = false;
   if (!kEnableSerial) {
     return;
   }
+
+  s.enabled = kEnableSerial;
+  s.numCycles = 0;
+
   Serial.begin(9600);
+}
+
+void printRpm(const struct Serial s, const int rpm) {
+  if (!s.enabled) {
+    return;
+  }
+  if (s.numCycles % 5 == 0) {
+    Serial.print("Current RPM: ");
+    Serial.print(rpm);
+    Serial.println();
+  }
+}
+
+void printLights(const struct Serial s, const int numLights) {
+  if (!s.enabled) {
+    return;
+  }
+  if (s.numCycles % 5 == 0) {
+    Serial.print("LEDs to light: ");
+    Serial.print(numLights);
+    Serial.println();
+  }
+}
+
+void updateCycles(struct Serial& s) {
+  if (!s.enabled) {
+    return;
+  }
+  s.numCycles++;
 }
 
 void enableLightOutput(bool enable) {
@@ -134,7 +171,7 @@ void setupRpmCalculation() {
 void setup() {
   setupDebugMode(gDebug);
 
-  setupSerial();
+  setupSerial(gSerial);
 
   setupShiftRegisterPins();
 
@@ -144,21 +181,9 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   int rpm = gDebug.enabled ? generateDebugRpm(gDebug) : readRpm();
-  if (kEnableSerial) {
-    if (gNumCycles % 5 == 0) {
-      Serial.print("Current RPM: ");
-      Serial.print(rpm);
-      Serial.println();
-    }
-  }
+  printRpm(gSerial, rpm);
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
-  if (kEnableSerial) {
-    if (gNumCycles % 5 == 0) {
-      Serial.print("LEDs to light: ");
-      Serial.print(numLights);
-      Serial.println();
-    }
-  }
+  printLights(gSerial, numLights);
   if (numLights > kNumLeds) {
     enableLightOutput(true);
     enableLightsUpTo(kNumLeds);
@@ -172,7 +197,5 @@ void loop() {
     enableLightOutput(false);
     delay(kIlluminationTimeMs);
   }
-  if (kEnableSerial) {
-    gNumCycles++;
-  }
+  updateCycles(gSerial);
 }
