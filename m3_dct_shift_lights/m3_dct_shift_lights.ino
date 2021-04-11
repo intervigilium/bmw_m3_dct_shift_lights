@@ -157,5 +157,7 @@ void loop() {
     enableLightOutput(false);
     delay(kIlluminationTimeMs);
   }
-  gNumCycles++;
+  if (kEnableSerial) {
+    gNumCycles++;
+  }
 }
