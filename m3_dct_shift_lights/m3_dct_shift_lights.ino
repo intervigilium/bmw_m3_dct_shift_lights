@@ -10,16 +10,18 @@ const int kShiftSerialInPin = 5;
 const int kShiftClearPin = A3;
 const int kShiftOutputEnablePin = A2;
 
-volatile unsigned long gInterval = 0;
-volatile unsigned long gLastPulseTime = 0;
-volatile int gTimeoutCounter = 0;
-long gCurrentRpm = 0;
-const int kTimeoutValue = 10;
-// BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
-const int kRpmPerPulse = 20;
-
 const int kActivationRpm = 4000;
 const int kMaxRpm = 6500;
+
+struct Tach {
+  volatile unsigned long interval;
+  volatile unsigned long lastPulseTime;
+  volatile int timeoutCounter;
+  long currentRpm;
+  int timeoutValue;
+  int rpmPerPulse;
+};
+struct Tach gTach;
 
 struct Debug {
   bool enabled;
@@ -125,27 +127,27 @@ int generateDebugRpm(struct Debug& d) {
   return rpm;
 }
 
-int readRpm() {
-  if (gTimeoutCounter > 0) {
+int readRpm(struct Tach& t) {
+  if (t.timeoutCounter > 0) {
     // Check for RPM signal shutting down
-    gTimeoutCounter--;
+    t.timeoutCounter--;
   }
-  if (gTimeoutCounter <= 0) {
-    gCurrentRpm = 0;
-    return gCurrentRpm;
+  if (t.timeoutCounter <= 0) {
+    t.currentRpm = 0;
+    return t.currentRpm;
   }
 
   // Calculate effective pulse interval in Hz
-  float pulseRate = 1 / (gInterval * 1e-6);
-  gCurrentRpm = pulseRate * kRpmPerPulse;
-  return gCurrentRpm;
+  float pulseRate = 1 / (t.interval * 1e-6);
+  t.currentRpm = pulseRate * t.rpmPerPulse;
+  return t.currentRpm;
 }
 
 void rpmIsr() {
   unsigned long now = micros();
-  gInterval = now - gLastPulseTime;
-  gLastPulseTime = now;
-  gTimeoutCounter = kTimeoutValue;
+  gTach.interval = now - gTach.lastPulseTime;
+  gTach.lastPulseTime = now;
+  gTach.timeoutCounter = gTach.timeoutValue;
 }
 
 void setupShiftRegisterPins() {
@@ -161,8 +163,18 @@ void setupShiftRegisterPins() {
   digitalWrite(kShiftClearPin, HIGH);
 }
 
-void setupRpmCalculation() {
-  gTimeoutCounter = kTimeoutValue;
+void setupRpmCalculation(struct Tach& t) {
+  const int kTimeoutValue = 10;
+  // BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
+  const int kRpmPerPulse = 20;
+
+  t.interval = 0;
+  t.lastPulseTime = 0;
+  t.timeoutCounter = 0;
+  t.currentRpm = 0;
+  t.timeoutValue = kTimeoutValue;
+  t.rpmPerPulse = kRpmPerPulse;
+
   pinMode(kRpmPin, INPUT);
   attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
 }
@@ -175,12 +187,12 @@ void setup() {
 
   setupShiftRegisterPins();
 
-  setupRpmCalculation();
+  setupRpmCalculation(gTach);
 }
 
 // the loop routine runs over and over again forever:
 void loop() {
-  int rpm = gDebug.enabled ? generateDebugRpm(gDebug) : readRpm();
+  int rpm = gDebug.enabled ? generateDebugRpm(gDebug) : readRpm(gTach);
   printRpm(gSerial, rpm);
   int numLights = calculateNumLights(rpm, kActivationRpm, kMaxRpm, kNumLeds);
   printLights(gSerial, numLights);
