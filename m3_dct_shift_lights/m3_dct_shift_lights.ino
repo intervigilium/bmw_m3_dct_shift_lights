@@ -24,7 +24,7 @@ const int kMaxRpm = 6500;
 const bool kDebug = false;
 int gDebugRpmDirection = 1;
 int kDebugRpmSlope = 200;
-int gLastDebugRpm = kActivationRpm - gDebugRpmDirection;
+int gLastDebugRpm = kActivationRpm - kDebugRpmSlope;
 
 const bool kEnableSerial = false;
 uint64_t gNumCycles = 0;
