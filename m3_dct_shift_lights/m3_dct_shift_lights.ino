@@ -3,9 +3,6 @@
 const int kNumLeds = 8;
 const int kIlluminationTimeMs = 200;
 
-// Pins 2/3 are the only external interrupt pins available
-const int kRpmPin = 2;
-
 const int kShiftClockPin = 3;
 const int kShiftRegClockPin = 6;
 const int kShiftSerialInPin = 5;
@@ -22,6 +19,7 @@ struct Tach {
   long currentRpm;
   int timeoutValue;
   int rpmPerPulse;
+  int rpmPin;
 };
 struct Tach gTach;
 
@@ -201,6 +199,8 @@ void setupRpmCalculation(struct Tach& t) {
   const int kTimeoutValue = 20;
   // BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
   const int kRpmPerPulse = 20;
+  // Pins 2/3 are the only external interrupt pins available on nano
+  const int kRpmPin = 2;
 
   t.interval = 0;
   t.lastPulseTime = 0;
@@ -208,9 +208,10 @@ void setupRpmCalculation(struct Tach& t) {
   t.currentRpm = 0;
   t.timeoutValue = kTimeoutValue;
   t.rpmPerPulse = kRpmPerPulse;
+  t.rpmPin = kRpmPin;
 
-  pinMode(kRpmPin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(kRpmPin), rpmIsr, RISING);
+  pinMode(t.rpmPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(t.rpmPin), rpmIsr, RISING);
 }
 
 // the setup routine runs once when you press reset:
