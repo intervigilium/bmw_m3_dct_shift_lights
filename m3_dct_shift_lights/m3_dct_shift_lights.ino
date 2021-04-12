@@ -1,3 +1,5 @@
+#include <avr/sleep.h>
+
 const int kNumLeds = 8;
 const int kIlluminationTimeMs = 200;
 
@@ -143,11 +145,42 @@ int readRpm(struct Tach& t) {
   return t.currentRpm;
 }
 
+void doSleep(const struct Tach t, const struct Serial s) {
+  if (t.timeoutCounter > 0) {
+    return;
+  }
+  sleep_enable();
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    if (s.enabled) {
+    Serial.println("Suspending due to no RPM input");
+  }
+  // Add delay to allow LED shutdown
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(200);
+  sleep_cpu();
+}
+
+void exitSleep(const struct Tach t) {
+  // Sleep occurs if timeout counter drops below 1
+  if (t.timeoutCounter > 0) {
+    return;
+  }
+  digitalWrite(LED_BUILTIN, HIGH);
+  sleep_disable();
+}
+
 void rpmIsr() {
+  // Disable sleep mode if RPM ISR occurs while sleeping
+  exitSleep(gTach);
   unsigned long now = micros();
   gTach.interval = now - gTach.lastPulseTime;
   gTach.lastPulseTime = now;
   gTach.timeoutCounter = gTach.timeoutValue;
+}
+
+void setupBuiltInLed() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void setupShiftRegisterPins() {
@@ -164,7 +197,8 @@ void setupShiftRegisterPins() {
 }
 
 void setupRpmCalculation(struct Tach& t) {
-  const int kTimeoutValue = 10;
+  // number of cycles until until idle once RPM signal stops coming
+  const int kTimeoutValue = 20;
   // BMW N51/N52 is 50Hz == 1000 RPM, 100Hz = 2000 RPM, or 20 RPM per pulse
   const int kRpmPerPulse = 20;
 
@@ -181,6 +215,8 @@ void setupRpmCalculation(struct Tach& t) {
 
 // the setup routine runs once when you press reset:
 void setup() {
+  setupBuiltInLed();
+
   setupDebugMode(gDebug);
 
   setupSerial(gSerial);
@@ -210,4 +246,5 @@ void loop() {
     delay(kIlluminationTimeMs);
   }
   updateCycles(gSerial);
+  doSleep(gTach, gSerial);
 }
