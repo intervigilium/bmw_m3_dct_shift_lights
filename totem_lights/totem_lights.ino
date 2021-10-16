@@ -7,9 +7,15 @@
 
 #define LED_BRIGHTNESS 200
 
+#define NUM_MODES 4
+int *counter;
+
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
+  counter = (int *) malloc(sizeof(int));
+  (*counter)++;
+
 #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
   clock_prescale_set(clock_div_1);
 #endif
@@ -107,5 +113,22 @@ void colorPulse() {
 }
 
 void loop() {
-  rainbowStreak();
+  const int mode = abs((*counter) % NUM_MODES);
+  switch (mode) {
+    case 0:
+      rainbow();
+      break;
+    case 1:
+      rainbowStreak();
+      break;
+    case 2:
+      rainbowMarquee();
+      break;
+    case 3:
+      colorPulse();
+      break;
+    default:
+      rainbow();
+      break;
+  }
 }
