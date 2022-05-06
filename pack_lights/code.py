@@ -20,11 +20,11 @@ min_level_avg = 0  # For dynamic adjustment of graph low & high
 max_level_avg = 512
 
 # Collection of prior volume samples
-vol = array.array('H', [0] * samples)
+vol = array.array("H", [0] * samples)
 
 mic_pin = AnalogIn(board.A2)
 
-strip = neopixel.NeoPixel(led_pin, n_pixels, brightness=.02, auto_write=True)
+strip = neopixel.NeoPixel(led_pin, n_pixels, brightness=0.02, auto_write=True)
 
 
 def remap_range(value, leftMin, leftMax, rightMin, rightMax):
@@ -64,7 +64,11 @@ while True:
     if height > peak:
         peak = height
 
-    print("val: {}, n: {}, lvl: {}, height: {}, min: {}, max: {}".format(val, n, lvl, height, min_level_avg, max_level_avg))
+    print(
+        "val: {}, n: {}, lvl: {}, height: {}, min: {}, max: {}".format(
+            val, n, lvl, height, min_level_avg, max_level_avg
+        )
+    )
 
     # Color pixels based on rainbow gradient
     for i in range(0, len(strip)):
@@ -106,4 +110,4 @@ while True:
     # fake rolling average - divide by 64 (2^6)
     max_level_avg = (max_level_avg * 63 + max_level) >> 6
 
-    #print(n)
+    # print(n)
