@@ -5,7 +5,7 @@ import neopixel
 from analogio import AnalogIn
 
 led_pin = board.A1  # NeoPixel LED strand is connected to GPIO #0 / D0
-n_pixels = 12  # Number of pixels you are using
+n_pixels = 36  # Number of pixels you are using
 dc_offset = 0  # DC offset in mic signal - if unusure, leave 0
 noise = 100  # Noise/hum/interference in mic signal
 samples = 60  # Length of buffer for dynamic level adjustment
