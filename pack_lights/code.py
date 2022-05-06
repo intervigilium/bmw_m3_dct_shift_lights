@@ -24,7 +24,7 @@ vol = array.array('H', [0] * samples)
 
 mic_pin = AnalogIn(board.A2)
 
-strip = neopixel.NeoPixel(led_pin, n_pixels, brightness=.03, auto_write=True)
+strip = neopixel.NeoPixel(led_pin, n_pixels, brightness=.02, auto_write=True)
 
 
 def remap_range(value, leftMin, leftMax, rightMin, rightMax):
