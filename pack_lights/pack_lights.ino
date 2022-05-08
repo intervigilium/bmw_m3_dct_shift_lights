@@ -1,7 +1,14 @@
+#include <Adafruit_DotStar.h>
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_ZeroFFT.h>
 
 //#define ENABLE_SERIAL 1
+
+#define DOTSTAR_DATA_PIN 3
+#define DOTSTAR_CLK_PIN 4
+Adafruit_DotStar led(1, DOTSTAR_DATA_PIN, DOTSTAR_CLK_PIN, DOTSTAR_BRG);
+
+#define LED_PIN 13
 
 #define NUM_RINGS 3
 #define PIXELS_PER_RING 12
@@ -14,6 +21,7 @@ void setup() {
   Serial.begin(9600);
 #endif
 
+  led.begin();
   pixels.begin();
 }
 
@@ -36,6 +44,8 @@ uint32_t currentIter = 0;
 #define DECIMATION_FACTOR 2
 
 void loop() {
+  led.clear();
+
   int32_t avg = 0;
   for (uint32_t i = 0; i < DATA_SIZE; i++) {
     int16_t val = analogRead(A2);
@@ -80,6 +90,7 @@ void loop() {
   // slow down animation speed by decimation factor
   currentIter = ((currentIter + 1) % MAX_ITER);
   if ((currentIter % DECIMATION_FACTOR)) {
+    led.show();
     pixels.show();
     return;
   }
@@ -91,6 +102,7 @@ void loop() {
         pixels.gamma32(pixels.ColorHSV(currHue, 255, BRIGHTNESS_VAL));
     pixels.fill(color, j * PIXELS_PER_RING, PIXELS_PER_RING);
   }
+  led.show();
   pixels.show();
 
 #if ENABLE_SERIAL
