@@ -1,0 +1,17 @@
+# Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.lck
+*-backups
+*.kicad_prl
+*.sch-bak
+*.tmp
+*~
+*-save.pro
+*-save.kicad_pcb
+_autosave-*
+fp-info-cache
+report.txt
