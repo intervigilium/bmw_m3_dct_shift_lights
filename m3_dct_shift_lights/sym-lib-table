@@ -1,0 +1,11 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "dk_Optoisolators-Transistor-Photovoltaic-Output")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Optoisolators-Transistor-Photovoltaic-Output.lib")(options "")(descr ""))
+  (lib (name "dk_Transistors-Bipolar-BJT-Single")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Transistors-Bipolar-BJT-Single.lib")(options "")(descr ""))
+  (lib (name "dk_Diodes-Rectifiers-Single")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Diodes-Rectifiers-Single.lib")(options "")(descr ""))
+  (lib (name "dk_Logic-Shift-Registers")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Logic-Shift-Registers.lib")(options "")(descr ""))
+  (lib (name "dk_Embedded-Microcontrollers")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Embedded-Microcontrollers.lib")(options "")(descr ""))
+  (lib (name "TPIC6C596N")(type "KiCad")(uri "/home/echen/scratch/tpic6c596n/TPIC6C596N.kicad_sym")(options "")(descr ""))
+  (lib (name "dk_Resistor-Networks-Arrays")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_Resistor-Networks-Arrays.lib")(options "")(descr ""))
+  (lib (name "dk_PMIC-Voltage-Regulators-DC-DC-Switching-Regulators")(type "Legacy")(uri "/home/echen/scratch/digikey-kicad-library/digikey-symbols/dk_PMIC-Voltage-Regulators-DC-DC-Switching-Regulators.lib")(options "")(descr ""))
+)

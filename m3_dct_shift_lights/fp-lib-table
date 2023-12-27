@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "digikey-footprints")(type "KiCad")(uri "/home/echen/scratch/digikey-kicad-library/digikey-footprints.pretty")(options "")(descr ""))
+  (lib (name "tpic6c596n")(type "KiCad")(uri "/home/echen/scratch/tpic6c596n")(options "")(descr ""))
+)
